@@ -114,6 +114,16 @@ email-triage-plugin/
 
 - [Family Assistant Skill](https://github.com/ericporres/family-assistant-skill) — Contact, household, and alias context that makes triage smarter
 
+## Codex Compatibility / Companion Port
+
+A Codex-first companion adaptation is available at:
+- [eric-porres-email-triage-skill-codex](https://github.com/daniel-p-green/eric-porres-email-triage-skill-codex)
+
+Compatibility summary:
+- This repository remains the Claude plugin implementation (`.claude-plugin`, `commands/`, `skills/`).
+- The companion repo packages the same triage approach for Codex global skills.
+- No behavior changes were made to this Claude plugin as part of that companion port.
+
 ## Background
 
 This template was built by [Eric Porres](https://github.com/ericporres) after running a personalized version daily for several months. The original handles 150–200 emails a day across 300+ aliases, triaging everything from embassy invitations to wine club promotions. This template abstracts that into a clean starting point anyone can customize.
