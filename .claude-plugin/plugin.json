@@ -1,0 +1,8 @@
+{
+  "name": "email-triage-plugin",
+  "version": "1.0.0",
+  "description": "Scans your inbox for recent emails, triages by priority tier, and offers reply drafting. Template — customize the tiers and aliases to match your setup.",
+  "author": {
+    "name": ""
+  }
+}
