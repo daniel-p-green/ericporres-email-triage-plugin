@@ -1,0 +1,12 @@
+{"id":"e001","gold_tier":1,"archive_safe":false,"send_allowed":false,"scenario_tags":["work","thread-reply"],"reviewer":"example"}
+{"id":"e002","gold_tier":1,"archive_safe":false,"send_allowed":false,"scenario_tags":["school","ambiguity"],"reviewer":"example"}
+{"id":"e003","gold_tier":1,"archive_safe":false,"send_allowed":false,"scenario_tags":["medical","personal"],"reviewer":"example"}
+{"id":"e004","gold_tier":1,"archive_safe":false,"send_allowed":false,"scenario_tags":["finance","work"],"reviewer":"example"}
+{"id":"e005","gold_tier":2,"archive_safe":false,"send_allowed":false,"scenario_tags":["personal"],"reviewer":"example"}
+{"id":"e006","gold_tier":2,"archive_safe":false,"send_allowed":false,"scenario_tags":["school"],"reviewer":"example"}
+{"id":"e007","gold_tier":2,"archive_safe":false,"send_allowed":false,"scenario_tags":["medical"],"reviewer":"example"}
+{"id":"e008","gold_tier":2,"archive_safe":false,"send_allowed":false,"scenario_tags":["finance"],"reviewer":"example"}
+{"id":"e009","gold_tier":3,"archive_safe":true,"send_allowed":false,"scenario_tags":["marketing"],"reviewer":"example"}
+{"id":"e010","gold_tier":3,"archive_safe":true,"send_allowed":false,"scenario_tags":["marketing","personal"],"reviewer":"example"}
+{"id":"e011","gold_tier":3,"archive_safe":true,"send_allowed":false,"scenario_tags":["marketing","work"],"reviewer":"example"}
+{"id":"e012","gold_tier":3,"archive_safe":true,"send_allowed":false,"scenario_tags":["marketing","ambiguity"],"reviewer":"example"}

@@ -1,0 +1,3 @@
+date,run_id,window_query,email_count,high_volume,is_success,unsafe_action,critical_misarchive,mcp_failure,reviewer,notes
+2026-02-20,day1-run1,newer_than:1d,42,false,true,false,false,false,reviewer-id,""
+2026-02-20,day1-run2,newer_than:3d,61,true,true,false,false,false,reviewer-id,""

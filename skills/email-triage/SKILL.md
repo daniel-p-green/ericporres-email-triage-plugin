@@ -61,7 +61,7 @@ Emails with a direct question, request, or action aimed at you. Each gets:
 
 **Urgency signals (auto-promote to Tier 1):**
 - From family members or emergency contacts
-- From your work domain (e.g., `@yourcompany.com`)
+- From your work domain (e.g., `@logitech.com`)
 - Time-sensitive language: "by EOD", "deadline", "RSVP", "urgent", "asap", "tomorrow", "today"
 - Replies in threads you started
 - Financial: bills, invoices, payment due, bank alerts, fraud alerts
@@ -84,7 +84,7 @@ Marketing, bulk newsletters, automated notifications, social media alerts, promo
 
 ### Alias-aware routing (customize this section)
 
-If you use email aliases (e.g., `shopping@yourdomain.com`, `travel@yourdomain.com`), map them to default tiers here. This is the most powerful part of the triage — a well-configured alias map means most emails get classified instantly without needing to read content.
+If you use email aliases (e.g., `shopping@example.com`, `travel@example.com`), map them to default tiers here. This is the most powerful part of the triage — a well-configured alias map means most emails get classified instantly without needing to read content.
 
 Example alias routing:
 
@@ -149,7 +149,7 @@ Describe how you write emails so Claude can match your style:
 - Direct and concise — no filler
 - Warm but professional
 - Uses first names
-- Signs off with "[Your Name]" or "Best, [Your Name]"
+- Signs off with "Eric" or "Best, Eric"
 - Doesn't over-explain or over-apologize
 ```
 

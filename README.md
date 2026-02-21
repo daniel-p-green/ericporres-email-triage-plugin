@@ -17,7 +17,7 @@ The triage runs in about 30 seconds for a typical day's inbox. You get a clean s
 
 Most inbox management tools try to be clever with rules and auto-sorting. This takes a different approach: Claude actually reads your email (subjects, senders, snippets) and makes judgment calls the way a good executive assistant would.
 
-The key insight is **alias-aware routing**. If you use email aliases — `shopping@yourdomain.com` goes to your inbox but gets a "Shopping" label, `travel@yourdomain.com` gets a "Travel" label — you can map each alias to a default priority tier. A well-configured alias map means 80% of emails get classified instantly, and Claude only needs to read the remaining 20% more carefully.
+The key insight is **alias-aware routing**. If you use email aliases — `shopping@example.com` goes to your inbox but gets a "Shopping" label, `travel@example.com` gets a "Travel" label — you can map each alias to a default priority tier. A well-configured alias map means 80% of emails get classified instantly, and Claude only needs to read the remaining 20% more carefully.
 
 This pairs especially well with the [Family Assistant Skill](https://github.com/ericporres/family-assistant-skill), which provides the contact context (family members, schools, service providers) that makes triage smarter. But it works standalone too.
 
@@ -109,6 +109,22 @@ email-triage-plugin/
 - **Never auto-archives.** Always asks first, always lists what will be archived.
 - **Never deletes.** Archive only. Nothing is permanently removed.
 - **Never modifies labels or filters.** Read-only triage.
+
+## Release Readiness Gates
+
+This repo includes hard gates for production confidence:
+
+- `python3 scripts/validate_release.py` checks manifest completeness, frontmatter, and placeholder blockers.
+- `python3 scripts/eval_triage.py ...` scores labeled inbox fixtures with threshold enforcement.
+- `python3 scripts/build_release_fixture.py ...` merges raw captures with human labels into a strict fixture.
+- `python3 scripts/check_fixture_balance.py ...` enforces dataset size and scenario coverage before scoring.
+- `python3 scripts/check_canary_evidence.py ...` validates 7-day canary evidence.
+- `python3 scripts/check_human_signoff.py ...` validates required human sign-off.
+- `python3 scripts/generate_release_report.py ...` builds a single GO/NO-GO report artifact.
+- `scripts/run_release_gate.sh <fixture> <predictions>` runs strict release criteria (500+ cases, safety checks).
+- `docs/release/GO_NO_GO_CHECKLIST.md` defines explicit go/no-go decision rules.
+
+For CI, `.github/workflows/quality-gates.yml` runs structural validation and a deterministic eval smoke test on every PR.
 
 ## Companion Templates
 

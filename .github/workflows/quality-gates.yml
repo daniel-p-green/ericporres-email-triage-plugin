@@ -1,0 +1,37 @@
+name: Quality Gates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate plugin release structure
+        run: python3 scripts/validate_release.py
+
+      - name: Run triage eval smoke test
+        run: |
+          python3 scripts/eval_triage.py \
+            --fixture eval/fixtures/example-fixture.jsonl \
+            --predictions eval/fixtures/example-predictions.jsonl \
+            --min-cases 10 \
+            --min-tier1-recall 1.0 \
+            --min-tier3-precision 1.0 \
+            --min-accuracy 1.0 \
+            --max-unsafe-action-rate 0.0 \
+            --enforce
+
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
