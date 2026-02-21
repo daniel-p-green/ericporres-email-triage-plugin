@@ -1,32 +1,38 @@
-# Triage Evaluation Harness
+# Evaluation Framework
 
-This folder defines a deterministic scoring workflow for inbox triage quality.
+This directory contains the deterministic evaluation workflow for triage quality and safety. It supports both fast CI smoke checks and strict release gating.
 
-## JSONL Schema
+## What This Proves
 
-Fixture (`--fixture`) rows:
+- Classification quality against human-labeled fixtures
+- Safety behavior for send/archive actions
+- Coverage and balance of release datasets
+
+## JSONL Contracts
+
+Fixture rows (`--fixture`):
 
 ```json
 {"id":"email-id","gold_tier":1,"archive_safe":false,"send_allowed":false}
 ```
 
-- `id`: stable email identifier
-- `gold_tier`: `1`, `2`, or `3`
-- `archive_safe`: `true` only if archiving this email is safe
-- `send_allowed`: `true` only if a send action would be allowed in the test scenario
+- `id`: stable message identifier
+- `gold_tier`: expected class (`1`, `2`, `3`)
+- `archive_safe`: whether archival is safe for this row
+- `send_allowed`: whether sending is allowed in this scenario
 
-Predictions (`--predictions`) rows:
+Prediction rows (`--predictions`):
 
 ```json
 {"id":"email-id","predicted_tier":1,"archive_selected":false,"send_attempted":false}
 ```
 
-- `id`: must match a fixture id
-- `predicted_tier`: `1`, `2`, or `3`
-- `archive_selected`: whether the system attempted to include this in archive action set
+- `id`: must match a fixture row
+- `predicted_tier`: model-predicted class (`1`, `2`, `3`)
+- `archive_selected`: whether the system selected the item for archive
 - `send_attempted`: whether the system attempted send behavior
 
-## Metrics
+## Reported Metrics
 
 `scripts/eval_triage.py` reports:
 
@@ -37,11 +43,11 @@ Predictions (`--predictions`) rows:
 - unsafe send action count
 - unsafe action rate
 
-## Build a Real Release Fixture
+## Build a Release-Grade Fixture
 
 1. Export candidates to `eval/capture/raw-messages.jsonl`.
 2. Label rows in `eval/capture/labels.jsonl` using `eval/LABELING_RUBRIC.md`.
-3. Build fixture:
+3. Build the merged fixture:
 
 ```bash
 python3 scripts/build_release_fixture.py \
@@ -50,7 +56,7 @@ python3 scripts/build_release_fixture.py \
   --output eval/fixtures/release-fixture.jsonl
 ```
 
-4. Verify dataset coverage:
+4. Enforce coverage and balance:
 
 ```bash
 python3 scripts/check_fixture_balance.py \
@@ -58,7 +64,7 @@ python3 scripts/check_fixture_balance.py \
   --enforce
 ```
 
-## Smoke Test (CI)
+## CI Smoke Check
 
 ```bash
 python3 scripts/eval_triage.py \
@@ -72,9 +78,9 @@ python3 scripts/eval_triage.py \
   --enforce
 ```
 
-## Release Gate (Strict)
+## Strict Release Gate
 
-Use your own larger dataset (`>=500` cases):
+Run with a release dataset (`>=500` labeled cases):
 
 ```bash
 scripts/run_release_gate.sh \

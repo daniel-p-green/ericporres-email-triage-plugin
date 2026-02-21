@@ -1,149 +1,140 @@
 # Email Triage Plugin for Claude
 
-A plugin template that turns Claude into your personal email triage assistant — one who knows which emails need a reply, which just need a glance, and which 47 are noise you can archive without opening.
+A production-oriented Claude plugin that turns Gmail into a clear action queue:
 
-## What This Is
+- `Reply Needed` for items that require action
+- `Review` for items worth reading but not urgent
+- `Noise` for low-value bulk mail that can be archived safely
 
-This is a **plugin** for [Claude](https://claude.ai) (works with both [Cowork](https://claude.ai) and [Claude Code](https://docs.claude.com/en/docs/claude-code)). Once configured, you can say "check my email" and Claude will:
+This repository is designed as both a usable plugin and a portfolio-quality example of product thinking, safety controls, and evaluation discipline.
 
-- **Scan your inbox** using Gmail MCP tools (time-windowed, not just unread)
-- **Classify every email** into three tiers: Reply Needed, Review, and Noise
-- **Draft replies** for the urgent ones, matching your writing style
-- **Offer to archive** the noise — with explicit confirmation, never automatically
+## Why This Project
 
-The triage runs in about 30 seconds for a typical day's inbox. You get a clean summary you can act on instead of scrolling through 200 subject lines.
+Most inbox tools optimize for filtering mechanics. This workflow optimizes for decision quality. It prioritizes:
 
-## Why This Approach
+- time-windowed scanning (`newer_than`) instead of brittle unread state
+- snippet-first triage to control cost and latency
+- alias-aware routing for high-volume inboxes
+- explicit confirmation gates before any send or archive action
 
-Most inbox management tools try to be clever with rules and auto-sorting. This takes a different approach: Claude actually reads your email (subjects, senders, snippets) and makes judgment calls the way a good executive assistant would.
+## Core Capabilities
 
-The key insight is **alias-aware routing**. If you use email aliases — `shopping@example.com` goes to your inbox but gets a "Shopping" label, `travel@example.com` gets a "Travel" label — you can map each alias to a default priority tier. A well-configured alias map means 80% of emails get classified instantly, and Claude only needs to read the remaining 20% more carefully.
+- Inbox triage using Gmail MCP tools
+- Three-tier classification with predictable output format
+- Thread-aware draft generation for urgent items
+- Explicit confirmation before send/archive
+- Deterministic evaluation harness and release gates
 
-This pairs especially well with the [Family Assistant Skill](https://github.com/ericporres/family-assistant-skill), which provides the contact context (family members, schools, service providers) that makes triage smarter. But it works standalone too.
+## Quick Start
 
-## Getting Started
+### 1. Install the Plugin
 
-### 1. Install the plugin
-
-**For Cowork users:**
-Drop the plugin folder into whichever folder you select when starting a Cowork session.
-
-**For Claude Code users:**
-Copy it into your project or home directory:
+For Claude Code:
 
 ```bash
 cp -r email-triage-plugin ~/.claude/plugins/email-triage-plugin
 ```
 
+For Cowork:
+- Place this plugin folder in the directory you select when starting a Cowork session.
+
 ### 2. Connect Gmail
 
-This plugin requires Gmail MCP tools to be available. In Cowork, enable the Gmail connector. In Claude Code, configure the Gmail MCP server.
+Enable Gmail MCP support in your Claude environment. The plugin expects inbox search, message read, thread read, draft/send, and archive capabilities.
 
-### 3. Customize the triage rules
+### 3. Customize for Your Inbox
 
-Open `skills/email-triage/SKILL.md` and customize:
+Edit `skills/email-triage/SKILL.md` and tune:
 
-| Section | What to change |
-|---------|---------------|
-| **Step 0 — Load Context** | Point to your reference files (family members, aliases, etc.) |
-| **Step 1 — Scan Inbox** | Add label exclusions for emails handled elsewhere (e.g., `-label:AI`) |
-| **Step 2 — Alias routing** | Map your aliases to default tiers |
-| **Step 2 — Urgency signals** | Add your work domain, kids' schools, key contacts |
-| **Step 4 — Voice guidelines** | Describe how you write emails so Claude can match your style |
+- Step 0 context sources (contacts, aliases, household references)
+- Step 1 query filters (for example, label exclusions)
+- Step 2 alias routing and urgency signals
+- Step 4 draft voice guidelines
 
-The most impactful customization is the alias routing table in Step 2. If you use 5+ aliases, start there.
+If you use multiple aliases, alias routing gives the largest accuracy boost.
 
-### 4. Start using it
+### 4. Run Triage
 
+Slash commands:
+
+```text
+/email
+/email work
+/email personal
+/summary
 ```
-/email              → Full inbox triage
-/email work         → Only work emails
-/email personal     → Exclude work emails
-/summary            → Alias for /email
+
+Natural language examples:
+
+- "Check my email"
+- "Catch me up on this week"
+- "Draft a reply to #3"
+- "Archive the noise"
+
+## Example Output
+
+```markdown
+# Inbox Triage - 2026-02-21
+[42 emails scanned from last 24h]
+
+## Reply Needed (4)
+1. **Sender** - Subject
+   One-line summary
+   -> Suggested: Reply
+
+## Review (11)
+- **Sender** - Subject - One-line summary
+
+## Noise (27)
+14 marketing, 6 social, 7 automated, 0 promotional
+-> Want me to archive these?
 ```
 
-Or just say:
-- *"Check my email"*
-- *"What's in my inbox?"*
-- *"Catch me up on email from this week"*
-- *"Draft a reply to #3"*
-- *"Archive the noise"*
+## Safety Model
 
-## File Structure
+- Never send without explicit confirmation
+- Never archive without explicit confirmation
+- Never permanently delete
+- Never auto-modify labels or filters
 
-```
+## Evaluation and Release Discipline
+
+This repository includes formal release gates:
+
+- structural validation: `scripts/validate_release.py`
+- quantitative scoring: `scripts/eval_triage.py`
+- dataset coverage checks: `scripts/check_fixture_balance.py`
+- canary evidence validation: `scripts/check_canary_evidence.py`
+- human sign-off validation: `scripts/check_human_signoff.py`
+- unified release artifact: `scripts/generate_release_report.py`
+- strict gate runner: `scripts/run_release_gate.sh`
+
+CI runs deterministic structural and smoke checks on every PR in `.github/workflows/quality-gates.yml`.
+
+## Repository Layout
+
+```text
 email-triage-plugin/
-├── .claude-plugin/
-│   └── plugin.json          # Plugin metadata
-├── commands/
-│   ├── email.md             # /email slash command
-│   └── summary.md           # /summary alias
-├── skills/
-│   └── email-triage/
-│       └── SKILL.md         # Triage logic, tier definitions, customization points
-├── LICENSE
-└── README.md
+├── .claude-plugin/                 # Plugin manifest
+├── commands/                       # /email and /summary entry points
+├── skills/email-triage/            # Triage behavior and routing logic
+├── scripts/                        # Validation, scoring, release tooling
+├── eval/                           # Fixture schema, labeling, capture inputs
+├── docs/release/                   # Go/no-go checklists and runbooks
+└── tests/                          # Unit tests for release tooling
 ```
 
-## How the Three Tiers Work
+## Companion Project
 
-**Tier 1 — Reply Needed.** Someone is waiting on you. Family, work, financial alerts, school emails, anything time-sensitive. These are numbered so you can say "draft a reply to #2" and Claude will pull up the full thread, draft something in your voice, and wait for your OK before sending.
-
-**Tier 2 — Review.** Needs your eyes but not a reply. Shipping updates, calendar invites, shared docs, travel confirmations. Presented as a quick-scan list.
-
-**Tier 3 — Noise.** Marketing, social notifications, promotional bulk. Summarized as category counts ("12 marketing, 8 social, 3 automated"). Claude offers to archive them in one shot.
-
-## Tips
-
-**Use email aliases.** This is the single biggest upgrade. If your domain supports catch-all or alias routing, create aliases for categories (`shopping@`, `travel@`, `newsletters@`) and add them to the alias routing table. The triage becomes dramatically more accurate.
-
-**Pair with the Family Assistant.** If Claude knows your family members, their schools, your doctors, and your service providers, it can classify emails from those senders instantly without needing to parse content.
-
-**Run it daily.** The default time window is 24 hours. Running `/email` each morning gives you a clean picture of what came in overnight and what actually needs attention.
-
-**Trust the archive.** Archived emails aren't deleted — they're still searchable. The noise tier is almost always right. Let Claude clear it out.
-
-## What It Doesn't Do
-
-- **Never sends without confirmation.** Claude drafts replies and waits for your explicit "send it."
-- **Never auto-archives.** Always asks first, always lists what will be archived.
-- **Never deletes.** Archive only. Nothing is permanently removed.
-- **Never modifies labels or filters.** Read-only triage.
-
-## Release Readiness Gates
-
-This repo includes hard gates for production confidence:
-
-- `python3 scripts/validate_release.py` checks manifest completeness, frontmatter, and placeholder blockers.
-- `python3 scripts/eval_triage.py ...` scores labeled inbox fixtures with threshold enforcement.
-- `python3 scripts/build_release_fixture.py ...` merges raw captures with human labels into a strict fixture.
-- `python3 scripts/check_fixture_balance.py ...` enforces dataset size and scenario coverage before scoring.
-- `python3 scripts/check_canary_evidence.py ...` validates 7-day canary evidence.
-- `python3 scripts/check_human_signoff.py ...` validates required human sign-off.
-- `python3 scripts/generate_release_report.py ...` builds a single GO/NO-GO report artifact.
-- `scripts/run_release_gate.sh <fixture> <predictions>` runs strict release criteria (500+ cases, safety checks).
-- `docs/release/GO_NO_GO_CHECKLIST.md` defines explicit go/no-go decision rules.
-
-For CI, `.github/workflows/quality-gates.yml` runs structural validation and a deterministic eval smoke test on every PR.
-
-## Companion Templates
-
-- [Family Assistant Skill](https://github.com/ericporres/family-assistant-skill) — Contact, household, and alias context that makes triage smarter
-
-## Codex Compatibility / Companion Port
-
-A Codex-first companion adaptation is available at:
+Codex adaptation:
 - [eric-porres-email-triage-skill-codex](https://github.com/daniel-p-green/eric-porres-email-triage-skill-codex)
 
-Compatibility summary:
-- This repository remains the Claude plugin implementation (`.claude-plugin`, `commands/`, `skills/`).
-- The companion repo packages the same triage approach for Codex global skills.
-- No behavior changes were made to this Claude plugin as part of that companion port.
+This repository remains the Claude plugin implementation.
 
-## Background
+## Attribution
 
-This template was built by [Eric Porres](https://github.com/ericporres) after running a personalized version daily for several months. The original handles 150–200 emails a day across 300+ aliases, triaging everything from embassy invitations to wine club promotions. This template abstracts that into a clean starting point anyone can customize.
+Based on the original workflow and project by [Eric Porres](https://github.com/ericporres).
 
 ## License
 
-MIT — use it however you'd like.
+MIT. See `LICENSE`.
